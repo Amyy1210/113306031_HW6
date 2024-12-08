@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>113306031_HW6_1A2B</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: left;
+      margin: 20px;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+    }
+    #gameLog {
+      margin-top: 20px;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+	<h1>113306031_HW6_1A2B</h1>	
+    <input type="text" id="guessInput" maxlength="4" placeholder="請輸入 4 個不重複的數字：">
+    <button onclick="checkGuess()">猜！</button>
+    <p id="error" class="error"></p>
+
+    <div id="gameRecord">
+    <h2>遊戲記錄：</h2>
+    </div>
+
+    <script>
+    let answer = generateAnswer();
+    let attempts = 0;
+    
+    function generateAnswer() {
+      let digits = [...Array(10).keys()]; 
+      let result = [];
+      for (let i = 0; i < 4; i++) {
+        let index = Math.floor(Math.random() * digits.length);
+        result.push(digits[index]);
+        digits.splice(index, 1); 
+      }
+      return result.join(''); 
+    }
+
+    function checkGuess() {
+      const input = document.getElementById("guessInput").value.trim();
+      const errorElement = document.getElementById("error");
+      const gameRecord = document.getElementById("gameRecord");
+      errorElement.textContent = ""; 
+
+      if (!/^\d{4}$/.test(input)) {
+        errorElement.textContent = "請輸入 4 位數字！";
+        return;
+      }
+      if (new Set(input).size !== 4) {
+        errorElement.textContent = "輸入的數字不能重複！";
+        return;
+      }
+
+      attempts++;
+      const result = evaluate(input);
+
+      const recordEntry = document.createElement("p");
+      recordEntry.textContent = `第 ${attempts} 次：${input} → ${result}`;
+      gameRecord.appendChild(recordEntry);
+
+
+      if (result === "4A0B") {
+        alert(`恭喜你答對了！你用了 ${attempts} 次。`);
+        resetGame();
+      }
+      document.getElementById("guessInput").value = "";
+    }
+
+    function evaluate(guess) {
+      let A = 0, B = 0;
+      for (let i = 0; i < 4; i++) {
+        if (guess[i] === answer[i]) {
+          A++;
+        } 
+        else if (answer.includes(guess[i])) {
+          B++;
+        }
+      }
+      return `${A}A${B}B`;
+    }
+
+    function resetGame() {
+      answer = generateAnswer(); 
+      attempts = 0; 
+      document.getElementById("gameRecord").innerHTML = "<h2>遊戲記錄：</h2>";
+    }
+  </script>
+</body>
+</html>
